@@ -23,17 +23,17 @@
 <meta property="og:site_name" content="RyanLiu博客">
 <meta property="og:description" content="Mit 6.828 Lab2 Memory Managementlab2的关键文件是要实现pmap.c中的虚拟内存系统，主函数是mem_init() 基础知识Link Address 和 Load Address待完成 程序在链接的时候，通过Link Address来指定程序代码在逻辑空间（Logical Address Space）中的地址。 虚拟内存硬件 MMU虚拟内存的功能需要配合硬件的功能">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="http://example.com/image/protected_mode_address_translation.png">
-<meta property="og:image" content="http://example.com/image/page_trans_register.png">
+<meta property="og:image" content="http://example.com/images/protected_mode_address_translation.png">
+<meta property="og:image" content="http://example.com/images/page_trans_register.png">
 <meta property="og:image" content="http://example.com/@attachment/Clipboard_2022-11-06-00-57-39.png">
 <meta property="og:image" content="http://example.com/@attachment/Clipboard_2022-11-06-01-30-31.png">
 <meta property="article:published_time" content="2022-05-03T07:14:03.000Z">
-<meta property="article:modified_time" content="2022-11-07T13:06:11.141Z">
+<meta property="article:modified_time" content="2022-11-07T13:08:09.060Z">
 <meta property="article:author" content="Ryan Liu">
 <meta property="article:tag" content="操作系统">
 <meta property="article:tag" content="6.828">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://example.com/image/protected_mode_address_translation.png">
+<meta name="twitter:image" content="http://example.com/images/protected_mode_address_translation.png">
   
   
   
@@ -282,12 +282,12 @@
                 <h1 id="Mit-6-828-Lab2-Memory-Management"><a href="#Mit-6-828-Lab2-Memory-Management" class="headerlink" title="Mit 6.828 Lab2 Memory Management"></a>Mit 6.828 Lab2 Memory Management</h1><p>lab2的关键文件是要实现pmap.c中的虚拟内存系统，主函数是mem_init()</p>
 <h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="Link-Address-和-Load-Address"><a href="#Link-Address-和-Load-Address" class="headerlink" title="Link Address 和 Load Address"></a>Link Address 和 Load Address</h3><p>待完成</p>
 <p>程序在链接的时候，通过Link Address来指定程序代码在<strong>逻辑空间</strong>（Logical Address Space）中的地址。</p>
-<h3 id="虚拟内存硬件-MMU"><a href="#虚拟内存硬件-MMU" class="headerlink" title="虚拟内存硬件 MMU"></a>虚拟内存硬件 MMU</h3><p>虚拟内存的功能需要配合硬件的功能实现，目的是提供一种地址转换功能。 对于x86体系来说，地址转换的流程如下图所示：<br><img src="/image/protected_mode_address_translation.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="虚拟内存硬件-MMU"><a href="#虚拟内存硬件-MMU" class="headerlink" title="虚拟内存硬件 MMU"></a>虚拟内存硬件 MMU</h3><p>虚拟内存的功能需要配合硬件的功能实现，目的是提供一种地址转换功能。 对于x86体系来说，地址转换的流程如下图所示：<br><img src="/images/protected_mode_address_translation.png" srcset="/img/loading.gif" lazyload></p>
 <p>注意图中的Logical Address、Linear Address、Physical Address的概念。</p>
 <h4 id="Segment-Translation"><a href="#Segment-Translation" class="headerlink" title="Segment Translation"></a>Segment Translation</h4><p>作用：略<br>是通过GDT&#x2F;LDT表来进行段转换的。<br>其中Base字段指的是段的<strong>起始地址</strong>，而Limit字段指的是段的<strong>大小</strong>。 为了简单起见，JOS的实验当中通过设置BASE地址为0x0，Limit段为0xfffff,Selector永远置为0x0，即将整个地址空间视为一个段，此时Logical Address &#x3D;&#x3D; Linear Address，在后面的实验中视为没有段转换。</p>
 <h4 id="Page-Translation"><a href="#Page-Translation" class="headerlink" title="Page Translation"></a>Page Translation</h4><p>页表的本质是<strong>逻辑地址到物理地址的映射</strong>。<br>页转换是通过二级页表机制进行地址翻译的。CPU通过寄存器<strong>CR3</strong>上的值来获取页目录（PD）的地址。</p>
 <p>其中Page Directory和Page Table的Entry结构如下图所示</p>
-<p><img src="/image/page_trans_register.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/images/page_trans_register.png" srcset="/img/loading.gif" lazyload></p>
 <p>PDE中存放着<strong>页表</strong>所在的<strong>物理内存</strong>地址，PTE存放的是<strong>页</strong>所在的<strong>物理内存</strong>地址。</p>
 <h3 id="一些基本的认识"><a href="#一些基本的认识" class="headerlink" title="一些基本的认识"></a>一些基本的认识</h3><ul>
 <li>程序的代码中变量、函数即指针等的值都是逻辑地址Logical Address，不是内存的物理地址。所有的程序都是运行在逻辑空间上的，逻辑空间中的数据和代码的分布是由程序在<strong>链接阶段</strong>就已经确定了，具体的例子可以参考ELF文件当中的Link Address和Load Address的作用。</li>
