@@ -16,24 +16,24 @@
   <meta name="author" content="Ryan Liu">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Raft 共识算法背景在分布式场景中, 即使机器发生故障的概率很小, 但当主机数很大时(如成千上万时), 总会有个别的主机会出现故障. 为了保证在个别机器故障时, 整个分布式系统依然能够正常对外服务, 这就需要通过一些冗余的机制去实现. 这被称为分布式系统的容错性(Fault Tolerance).主要的办法就是通过”复制”(Replication)的手段, 复制一份或多份状态(数据)的副本, 并">
+    <meta name="description" content="Mit 6.824 Lab 1 Mapreduce 实验报告lab1的主要目的就是熟悉GO语言, 难度适中 Mapreduce主要思想map     (k1,v1)          -&gt; list(k2,v2)reduce  (k2,list(v2))    -&gt; list(v2)  Map  取key&#x2F;value pairs (k1,v1), 并通过Map操作产生一个中间">
 <meta property="og:type" content="article">
-<meta property="og:title" content="raft">
-<meta property="og:url" content="https://ryanliu97.github.io/2022/05/03/raft/index.html">
+<meta property="og:title" content="mapreduce">
+<meta property="og:url" content="https://ryanliu97.github.io/mapreduce/index.html">
 <meta property="og:site_name" content="RyanLiu博客">
-<meta property="og:description" content="Raft 共识算法背景在分布式场景中, 即使机器发生故障的概率很小, 但当主机数很大时(如成千上万时), 总会有个别的主机会出现故障. 为了保证在个别机器故障时, 整个分布式系统依然能够正常对外服务, 这就需要通过一些冗余的机制去实现. 这被称为分布式系统的容错性(Fault Tolerance).主要的办法就是通过”复制”(Replication)的手段, 复制一份或多份状态(数据)的副本, 并">
+<meta property="og:description" content="Mit 6.824 Lab 1 Mapreduce 实验报告lab1的主要目的就是熟悉GO语言, 难度适中 Mapreduce主要思想map     (k1,v1)          -&gt; list(k2,v2)reduce  (k2,list(v2))    -&gt; list(v2)  Map  取key&#x2F;value pairs (k1,v1), 并通过Map操作产生一个中间">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://ryanliu97.github.io/raft/ServerStates.png">
-<meta property="article:published_time" content="2022-05-03T07:10:29.000Z">
-<meta property="article:modified_time" content="2022-11-07T17:06:02.219Z">
+<meta property="og:image" content="https://ryanliu97.github.io/mapreduce/mapreduce.jpg">
+<meta property="article:published_time" content="2022-05-03T07:14:03.000Z">
+<meta property="article:modified_time" content="2022-11-07T17:12:53.249Z">
 <meta property="article:author" content="Ryan Liu">
 <meta property="article:tag" content="分布式">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://ryanliu97.github.io/raft/ServerStates.png">
+<meta name="twitter:image" content="https://ryanliu97.github.io/mapreduce/mapreduce.jpg">
   
   
   
-  <title>raft - RyanLiu博客</title>
+  <title>mapreduce - RyanLiu博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -198,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="raft"></span>
+            <span id="subtitle" data-typed-text="mapreduce"></span>
           
         </div>
 
@@ -209,7 +209,7 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-05-03 15:10" pubdate>
+        <time datetime="2022-05-03 15:14" pubdate>
           May 3, 2022 pm
         </time>
       </span>
@@ -221,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          3.1k words
+          3.3k words
         
       </span>
     
@@ -232,7 +232,7 @@
         
         
         
-          26 mins
+          28 mins
         
       </span>
     
@@ -270,69 +270,70 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">raft</h1>
+            <h1 style="display: none">mapreduce</h1>
             
             
               <div class="markdown-body">
                 
-                <h1 id="Raft-共识算法"><a href="#Raft-共识算法" class="headerlink" title="Raft 共识算法"></a>Raft 共识算法</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在分布式场景中, 即使机器发生故障的概率很小, 但当主机数很大时(如成千上万时), 总会有个别的主机会出现故障. 为了保证在个别机器故障时, 整个分布式系统依然能够正常对外服务, 这就需要通过一些冗余的机制去实现. 这被称为分布式系统的容错性(Fault Tolerance).<br>主要的办法就是通过”复制”(Replication)的手段, 复制一份或多份状态(数据)的副本, 并分布到不同的机器当中, 当机器故障时, 存有副本的机器就能及时上线(Go lives), 接替故障机器的工作.<br>主要的Repliacation有两种类型:</p>
-<h5 id="State-Transfer"><a href="#State-Transfer" class="headerlink" title="State Transfer :"></a>State Transfer :</h5><p>直接复制内存的数据, 对整个数据副本进行拷贝, 通常消耗较大.</p>
-<h5 id="Replicated-State-Machine"><a href="#Replicated-State-Machine" class="headerlink" title="Replicated State Machine"></a>Replicated State Machine</h5><p>对外部事件进行复制, 如外部的读写时间. 根据状态复制的层级不同, 主要有两种做法:</p>
+                <h1 id="Mit-6-824-Lab-1-Mapreduce-实验报告"><a href="#Mit-6-824-Lab-1-Mapreduce-实验报告" class="headerlink" title="Mit 6.824 Lab 1 Mapreduce 实验报告"></a>Mit 6.824 Lab 1 Mapreduce 实验报告</h1><p>lab1的主要目的就是熟悉GO语言, 难度适中</p>
+<h2 id="Mapreduce主要思想"><a href="#Mapreduce主要思想" class="headerlink" title="Mapreduce主要思想"></a>Mapreduce主要思想</h2><p>map     (k1,v1)          -&gt; list(k2,v2)<br>reduce  (k2,list(v2))    -&gt; list(v2)</p>
 <ul>
-<li>复制应用层面的状态. 如GFS</li>
-<li>复制机器层面的状态, 完全复制一台机器的寄存器, 中断信号等. 被称为虚拟机(Virtual Machine)</li>
+<li>Map<br>  取key&#x2F;value pairs (k1,v1), 并通过Map操作产生一个中间k&#x2F;v集合list(k2,v2). Mapreduce库将所有具有相同的intermediate key $I$的值收集起来,形成一个k2对应的集合list(v2), 并将其传递给reduce函数.</li>
+<li>Reduce<br>  接受一个Intermediate key $I$ (k2), 及其值的集合list(v2). reduce操作合并集合中所有的值,并产生一个较小的集合list(v2)–通常来说每个reduce操作只会产生零个或一个输出值. 即len(list(v2)) &#x3D;&#x3D; 0 or 1</li>
 </ul>
-<p>目前主要的技术都集中在Replacated State Machine 上. 主要的难点在于, 如何保证主机Primary与从机replica(s)之间状态的一致性?(Consistency).</p>
-<h3 id="一致性问题发生在哪"><a href="#一致性问题发生在哪" class="headerlink" title="一致性问题发生在哪?"></a>一致性问题发生在哪?</h3><p>假设下图的一个场景. 拥有一主一从的分布式系统中, 假设有两个Client(C1, C2)分别对变量x进行写入操作Wx, C1将1写入x中: Wx1, C2将2 写入x中: Wx2. 在一个坏的设计中, 如果不经过一致性的保护, C1, C2仅仅只是分别的将两个请求同时发送到主从服务器中. 但是由于网络的不确定性, 并不能保证Wx1与Wx2两个操作到达Server1与Server2的顺序是否一致. 若顺序不一致, 就会导致主从服务器X变量的值不同, 这就产生了<strong>不一致性</strong>.</p>
-<p>而Raft算法就是一种解决主从复制一致性的分布式共识算法.</p>
-<h2 id="Raft-分布式共识算法"><a href="#Raft-分布式共识算法" class="headerlink" title="Raft 分布式共识算法"></a>Raft 分布式共识算法</h2><blockquote>
-<p>论文链接<br>Diego Ongaro and John Ousterhout. 2014. In search of an understandable consensus algorithm. In <i>Proceedings of the 2014 USENIX conference on USENIX Annual Technical Conference</i> (<i>USENIX ATC’14</i>). USENIX Association, USA, 305–320.<br><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf">https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf</a></p>
-</blockquote>
-<p>-强烈推荐先看Raft的动画演示, 对Raft的有一个整体的印象, 再去看论文的细节. 推荐一个动画演示的网站:<br><a target="_blank" rel="noopener" href="http://thesecretlivesofdata.com/raft/">http://thesecretlivesofdata.com/raft/</a></p>
+<h3 id="例子-单词计数"><a href="#例子-单词计数" class="headerlink" title="例子: 单词计数"></a>例子: 单词计数</h3><p>假设有很多文件, 每个文件包含很多的单词. 为了统计文件中单词的个数, 可设计如下的Map-Reduce操作    </p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs Java">map(String key, String value):<br>    <span class="hljs-comment">// key:     document name</span><br>    <span class="hljs-comment">// value:   document content</span><br>    <span class="hljs-keyword">for</span> each word w in value:<br>        EmitIntermediate(w,<span class="hljs-string">&quot;1&quot;</span>);<br>    <br><span class="hljs-comment">//具有相同w键的值会被收集起来,传递到reduce中</span><br><span class="hljs-comment">//如reduce接受到的key为apple, 而values 为[&quot;1&quot;,...,&quot;1&quot;]</span><br><br>reduce(String key, Iterator values):<br>    <span class="hljs-comment">// key : a word</span><br>    <span class="hljs-comment">// values: a list of counts</span><br>    <span class="hljs-type">int</span> <span class="hljs-variable">result</span> <span class="hljs-operator">=</span> <span class="hljs-number">0</span>;<br>    <span class="hljs-keyword">for</span> each v in values:<br>        result += ParseInt(v);<br>    Emit(AsString(result));<br>    <span class="hljs-comment">//这里的reduce最终输出其实就是单词的个数</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="Mapreduce实验"><a href="#Mapreduce实验" class="headerlink" title="Mapreduce实验"></a>Mapreduce实验</h2><h3 id="串行化的Mapreduce-–-单词计数"><a href="#串行化的Mapreduce-–-单词计数" class="headerlink" title="串行化的Mapreduce – 单词计数"></a>串行化的Mapreduce – 单词计数</h3><ol>
+<li>对于每个文件运行一次Map操作, Map操作生成一个数组kva, 包含了所有的键值对, 然后append进intermediate的列表中.</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs Go">   intermediate := []mr.KeyValue&#123;&#125;<br><span class="hljs-keyword">for</span> _, filename := <span class="hljs-keyword">range</span> os.Args[<span class="hljs-number">2</span>:] &#123;<br>	<span class="hljs-comment">//...代码省略</span><br>	kva := mapf(filename, <span class="hljs-type">string</span>(content))<br>	intermediate = <span class="hljs-built_in">append</span>(intermediate, kva...)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li><p>对intermediate按照key的大小进行排序.</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Go">sort.Sort(ByKey(intermediate))<br></code></pre></td></tr></table></figure>
+</li>
+<li><p>将key相同的value值聚合在一起, 并通过reducef得到最后的输出,并保存在ofile中. 即统计intermediate中有多少个[key, “1”]</p>
+</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs Go">   <span class="hljs-keyword">for</span> i &lt; <span class="hljs-built_in">len</span>(intermediate) &#123;<br>	j := i + <span class="hljs-number">1</span><br>	<span class="hljs-keyword">for</span> j &lt; <span class="hljs-built_in">len</span>(intermediate) &amp;&amp; intermediate[j].Key == intermediate[i].Key &#123;<br>		j++<br>	&#125;<br>	values := []<span class="hljs-type">string</span>&#123;&#125;<br>	<span class="hljs-keyword">for</span> k := i; k &lt; j; k++ &#123;<br>		values = <span class="hljs-built_in">append</span>(values, intermediate[k].Value)<br>	&#125;<br>	output := reducef(intermediate[i].Key, values)<br><br>	<span class="hljs-comment">// this is the correct format for each line of Reduce output.</span><br>	fmt.Fprintf(ofile, <span class="hljs-string">&quot;%v %v\n&quot;</span>, intermediate[i].Key, output)<br><br>	i = j<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="分布式Mapreduce"><a href="#分布式Mapreduce" class="headerlink" title="分布式Mapreduce"></a>分布式Mapreduce</h3><h4 id="主要功能"><a href="#主要功能" class="headerlink" title="主要功能"></a>主要功能</h4><p>主要的框架分为两种进程, Coordinator和多个Workers.<br>采用生产者消费者模式:</p>
 <ul>
-<li>a lab guidance written by the Teaching Asistance of MIT 6.824, in which you may find it very helpful during implementng the lab: <a target="_blank" rel="noopener" href="https://thesquareplanet.com/blog/students-guide-to-raft/">https://thesquareplanet.com/blog/students-guide-to-raft/</a></li>
+<li>Coordinator: 生产者, 产生需要执行的任务</li>
+<li>Workers : 消费者, 消费从Coordinator获取的任务<br><img src="/mapreduce/mapreduce.jpg" srcset="/img/loading.gif" lazyload></li>
 </ul>
-<h3 id="提出背景与Paxos"><a href="#提出背景与Paxos" class="headerlink" title="提出背景与Paxos"></a>提出背景与Paxos</h3><p>… 待完善</p>
-<h4 id="Raft算法基础"><a href="#Raft算法基础" class="headerlink" title="Raft算法基础"></a>Raft算法基础</h4><p>对于任何一个时刻, 每个服务器只能以下三种状态之一: </p>
+<h5 id="Map阶段"><a href="#Map阶段" class="headerlink" title="Map阶段"></a>Map阶段</h5><p>Mapper读取输入文件的切片split#, 并通过mapf处理, 每个Mapper生成NReduce个中间文件(保存在本地). Mapper产生的kv经过key的hash后,会被放到指定的中间文件中. 每个Mapper产生的相同的Key只能出现在一个中间文件中. 这些中间文件在Reduce阶段只会由一个Reducer进行处理.</p>
+<h5 id="Reduce阶段"><a href="#Reduce阶段" class="headerlink" title="Reduce阶段"></a>Reduce阶段</h5><p>假设有M个mapper, R个Reducer. 第m个Mapper产生的第r个reduced中间文件用 <code>Inter[m][r]</code>表示. 那么对于每个Reducer <code>r</code>, 首先会合并所有Mapper产生的<code>r</code>号文件, 即<code>[Inter[0][r], .., Inter[m-1][r]]</code>. 并对合并的数据进行汇集, 将具有相同Key的Value形成一个列表, 即前文所属的(k2,list(v2)). 再通过reduce函数生成最后的结果.</p>
+<p>注意:</p>
 <ul>
-<li>Leader</li>
-<li>Follower</li>
-<li>Candidate<br>通常情况下只有1个Leader, 剩下的服务器都是Follower. Follower只被动的接收来自Leader和Candidate的请求,而自身不发出请求. 所有来自客户端的请求都由Leader进行处理, (若客户端请求了一个Floower, 其会重定向至其Leader). Candidate是为了选举出一个新的Leader而存在的状态. 状态之间的转移如图:<br><img src="/raft/ServerStates.png" srcset="/img/loading.gif" lazyload><!-- <img src = "ServerStates.png"> --></li>
+<li>通常多个Workers会分布在多个机器当中, 通过RPC与Coordinator进行通信. (本实验所有进程运行在一个机子上.)</li>
+<li>如果一个Worker超时未完成任务(比如机器down了),  Coordinator应该知晓,并将相同的任务分配给另一个Worker去完成.</li>
 </ul>
-<p>每个服务器会存储一个current term数字, 表示当前任期的编号, 这个编号随着时间单调递增. 这个任期编号会在不同的服务器进行交换. 分三种情况:</p>
+<h4 id="实现细节"><a href="#实现细节" class="headerlink" title="实现细节"></a>实现细节</h4><p>课程要求不能公开源码, 这里主要提几点设计的要点:</p>
 <ul>
-<li>如果当前服务器的current term小于其他服务器的term, 那么它就会更新自己的term到一个更大的值</li>
-<li>如果一个Leader或者Candidate发现自己的term过期了, 那么就会立即回到Follower的身份</li>
-<li>如果一个server收到了一个过时term的请求, 它会直接拒绝</li>
-</ul>
-<p>服务器之间采用RPC进行通信, 主要有两个调用:</p>
+<li><p>Coordinator与Worker之间通过RPC通信. 主要有两个调用函数 GetTasks和FinishedTasks. GetTasks从Coordinator中获取任务, FinishedTasks用于通知Coordinator任务已完成. RPC使用Task结构体传递信息.<br>  Tasks结构体主要包含以下信息(注意RPC类型首字母要大写):</p>
 <ul>
-<li>RequestVote: 被Candidate用来进行Leader选举</li>
-<li>AppendEntries: 由Leader向其他replicas复制日志条目的副本. 同时用来发送心跳信号.</li>
+<li>Task_idx (表示任务的序号, 用以区分不同的Mapper或Reducer)</li>
+<li>Task_Type (用以标识任务的类型:Mapping, Reducing 和 Finishing)</li>
+<li>NReduce</li>
+<li>NMap</li>
+<li>File_name (处理的文件名)</li>
+<li>Begin_Timestamp (任务开始的时间)</li>
 </ul>
-<h4 id="Raft算法需要保证的一些性质"><a href="#Raft算法需要保证的一些性质" class="headerlink" title="Raft算法需要保证的一些性质"></a>Raft算法需要保证的一些性质</h4><p>在了解算法之前, 先了解下Raft算法所要实现的目标是什么,主要由以下五条:</p>
+</li>
+<li><p>Coordinator需要知晓Worker宕机. 主要的实现就是当Worker在分配任务一段时间后没有完成任务(如10s), Coordinator则认为Worker崩溃,需要将任务重新分配给另一个Worker执行.<br>为了实现此项功能, Coordinator维护两个队列 </p>
 <ul>
-<li><strong>Election Safty</strong>: 每个任期只能有一个Leader</li>
-<li><strong>Leader Append-Only</strong>: Leader永远不会重写和删除它日志中的条目, 只会append新的条目. 也就是说Leader对日志拥有领导权.</li>
-<li><strong>Log Matching</strong>: 如果两个日志当中有两条index与term都相同的条目, 那么所有小于等于该index的日志条目都是确定唯一的</li>
-<li><strong>Leader Completeness</strong>: 如果一个日志条目已经在某一term提交了,那么在接下来的任期(higher-numbered terms)的Leader中都会包含此条目. 即无论下一个Leader是谁, 他的log当中都应该包含系统中所有已提交的日志条目</li>
-<li><strong>State Machine Safety</strong>: 如果一个服务器已经将日志条目应用到state machine去了, 那么任何其他服务器都不能提交一个具有相同index的不同条目. 即所有对State Machine的提交都是一致的.</li>
-</ul>
-<h4 id="Leader-Election"><a href="#Leader-Election" class="headerlink" title="Leader Election"></a>Leader Election</h4><p>所有的servers都从Follower角色开始. 只要一个server持续收到来自Leader的心跳信号, 那么它就会一直保持Follower的状态. Leader会周期性的通过发送心跳信号(通过没有log entreis的AppendEntries RPC)来保持自己的统治地位. 如果一个Follower一段时间都没有收到心跳信号, 就会触发超时, 称为<strong>Election Timeout</strong>, 此时服务器就会认为Leader已挂, 并开始选举一个新的Leader.</p>
-<h5 id="Election的流程"><a href="#Election的流程" class="headerlink" title="Election的流程"></a>Election的流程</h5><ul>
-<li>follower首先自增自己的current term,并转变成candidate身份</li>
-<li>candidate投自己一票, 并向集群中的其他服务器并发的发送Request Vote RPC.</li>
-<li>candidate会一直处于自己的状态, 直到下列三件事发生:<ul>
-<li>赢下选举</li>
-<li>其他服务器确立了自己的leader地位</li>
-<li>一段时间后没有winner</li>
+<li>Tasks_Ready: 表示待分配的任务, 用一个带缓存的Channel实现, 可通过阻塞实现同步.</li>
+<li>Tasks_Assigned: 表示已分配但未完成的任务, 用map进行存储, 能够通过idx进行快速的查找</li>
 </ul>
 </li>
 </ul>
-<h6 id="赢下选举"><a href="#赢下选举" class="headerlink" title="赢下选举"></a>赢下选举</h6><p>…</p>
-<h6 id="其他服务器赢下选举"><a href="#其他服务器赢下选举" class="headerlink" title="其他服务器赢下选举"></a>其他服务器赢下选举</h6><p>在等待选举的过程中, candidate可能会收到其他服务器的AppendEntries RPC, 即有其他服务器宣称自己是leader, 如果leader的term大于等于candidate的current term, 那么candidate就认为leader是合法的,并回到follower状态</p>
-<h6 id="Split-Vote"><a href="#Split-Vote" class="headerlink" title="Split Vote"></a>Split Vote</h6><p>一段时间后, candidate们之间的投票意见不一,选举超时. 通常会在所有candidate在同一时间开始选举时发生. 再超时后, current term自增, 新的一轮选举会开始.</p>
-<p>为了解决candidate同时开始选举而产生的Split Vote现象, Raft设计election timeout的时间为一个区间随机值, 比如在150 ~ 300 ms之间.</p>
+<p>在Worker调用GetTasks后, Coordinator会添加一个10s定时器, 并保存在map容器中,通过Tasks_Key查询. 如果任务按时完成, 那么在FinishedTasks的调用中会从map当中获取其对应的计时器, 并取消计时. 若任务没有按时完成, 定时器超时后回调TimeoutHandler, 将超时的Tasks重新放入Tasks_Ready队列,等待其他Worker获取.</p>
+<ul>
+<li>任务完成时Worker需要传回的Task结构体, Coordinator需要对比传回Task的Begin_TimeStamp与Tasks_Assigned队列当中的Begin_TimeStamp是否一致. 如果不一致说明是因为历史的超时Worker返回的结果. 那么则忽略这次结果. (此实现有点粗糙)</li>
+</ul>
+<p>Reduce阶段需要在Map阶段后执行, 因此Coordinator会记录完成的Map任务数, 所有的Map完成后再往Tasks_ready队列中加入Reduce的任务.</p>
 
                 
               </div>
@@ -378,8 +379,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>raft</div>
-      <div>https://ryanliu97.github.io/2022/05/03/raft/</div>
+      <div>mapreduce</div>
+      <div>https://ryanliu97.github.io/mapreduce/</div>
     </div>
     <div class="license-meta">
       
@@ -423,15 +424,21 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2022/05/03/mapreduce/" title="mapreduce">
+                      <a href="/mit6828lab2/" title="MIT 6.828 Lab2">
                         <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">mapreduce</span>
+                        <span class="hidden-mobile">MIT 6.828 Lab2</span>
                         <span class="visible-mobile">Previous</span>
                       </a>
                     
                   </article>
                   <article class="post-next col-6">
                     
+                    
+                      <a href="/raft/" title="raft">
+                        <span class="hidden-mobile">raft</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
                     
                   </article>
                 </div>
