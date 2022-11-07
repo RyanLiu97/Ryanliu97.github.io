@@ -16,21 +16,24 @@
   <meta name="author" content="Ryan Liu">
   <meta name="keywords" content="">
   
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+    <meta name="description" content="Raft 共识算法背景在分布式场景中, 即使机器发生故障的概率很小, 但当主机数很大时(如成千上万时), 总会有个别的主机会出现故障. 为了保证在个别机器故障时, 整个分布式系统依然能够正常对外服务, 这就需要通过一些冗余的机制去实现. 这被称为分布式系统的容错性(Fault Tolerance).主要的办法就是通过”复制”(Replication)的手段, 复制一份或多份状态(数据)的副本, 并">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://example.com/2022/11/07/hello-world/index.html">
+<meta property="og:title" content="raft">
+<meta property="og:url" content="http://example.com/2022/05/03/raft/index.html">
 <meta property="og:site_name" content="RyanLiu博客">
-<meta property="og:description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick">
+<meta property="og:description" content="Raft 共识算法背景在分布式场景中, 即使机器发生故障的概率很小, 但当主机数很大时(如成千上万时), 总会有个别的主机会出现故障. 为了保证在个别机器故障时, 整个分布式系统依然能够正常对外服务, 这就需要通过一些冗余的机制去实现. 这被称为分布式系统的容错性(Fault Tolerance).主要的办法就是通过”复制”(Replication)的手段, 复制一份或多份状态(数据)的副本, 并">
 <meta property="og:locale" content="en_US">
-<meta property="article:published_time" content="2022-11-07T12:36:07.786Z">
-<meta property="article:modified_time" content="2022-11-07T12:36:07.786Z">
+<meta property="og:image" content="http://example.com/2022/05/03/raft/raft/ServerStates.png">
+<meta property="article:published_time" content="2022-05-03T07:10:29.000Z">
+<meta property="article:modified_time" content="2022-11-07T12:41:51.435Z">
 <meta property="article:author" content="Ryan Liu">
+<meta property="article:tag" content="分布式">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="http://example.com/2022/05/03/raft/raft/ServerStates.png">
   
   
   
-  <title>Hello World - RyanLiu博客</title>
+  <title>raft - RyanLiu博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -195,7 +198,7 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Hello World"></span>
+            <span id="subtitle" data-typed-text="raft"></span>
           
         </div>
 
@@ -206,8 +209,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-11-07 20:36" pubdate>
-          November 7, 2022 pm
+        <time datetime="2022-05-03 15:10" pubdate>
+          May 3, 2022 pm
         </time>
       </span>
     
@@ -218,7 +221,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          367 words
+          3.1k words
         
       </span>
     
@@ -229,7 +232,7 @@
         
         
         
-          4 mins
+          26 mins
         
       </span>
     
@@ -267,24 +270,71 @@
         <div id="board">
           <article class="post-content mx-auto">
             <!-- SEO header -->
-            <h1 style="display: none">Hello World</h1>
+            <h1 style="display: none">raft</h1>
             
             
               <div class="markdown-body">
                 
-                <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo new <span class="hljs-string">&quot;My New Post&quot;</span><br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo server<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo generate<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">$ hexo deploy<br></code></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+                <h1 id="Raft-共识算法"><a href="#Raft-共识算法" class="headerlink" title="Raft 共识算法"></a>Raft 共识算法</h1><h2 id="背景"><a href="#背景" class="headerlink" title="背景"></a>背景</h2><p>在分布式场景中, 即使机器发生故障的概率很小, 但当主机数很大时(如成千上万时), 总会有个别的主机会出现故障. 为了保证在个别机器故障时, 整个分布式系统依然能够正常对外服务, 这就需要通过一些冗余的机制去实现. 这被称为分布式系统的容错性(Fault Tolerance).<br>主要的办法就是通过”复制”(Replication)的手段, 复制一份或多份状态(数据)的副本, 并分布到不同的机器当中, 当机器故障时, 存有副本的机器就能及时上线(Go lives), 接替故障机器的工作.<br>主要的Repliacation有两种类型:</p>
+<h5 id="State-Transfer"><a href="#State-Transfer" class="headerlink" title="State Transfer :"></a>State Transfer :</h5><p>直接复制内存的数据, 对整个数据副本进行拷贝, 通常消耗较大.</p>
+<h5 id="Replicated-State-Machine"><a href="#Replicated-State-Machine" class="headerlink" title="Replicated State Machine"></a>Replicated State Machine</h5><p>对外部事件进行复制, 如外部的读写时间. 根据状态复制的层级不同, 主要有两种做法:</p>
+<ul>
+<li>复制应用层面的状态. 如GFS</li>
+<li>复制机器层面的状态, 完全复制一台机器的寄存器, 中断信号等. 被称为虚拟机(Virtual Machine)</li>
+</ul>
+<p>目前主要的技术都集中在Replacated State Machine 上. 主要的难点在于, 如何保证主机Primary与从机replica(s)之间状态的一致性?(Consistency).</p>
+<h3 id="一致性问题发生在哪"><a href="#一致性问题发生在哪" class="headerlink" title="一致性问题发生在哪?"></a>一致性问题发生在哪?</h3><p>假设下图的一个场景. 拥有一主一从的分布式系统中, 假设有两个Client(C1, C2)分别对变量x进行写入操作Wx, C1将1写入x中: Wx1, C2将2 写入x中: Wx2. 在一个坏的设计中, 如果不经过一致性的保护, C1, C2仅仅只是分别的将两个请求同时发送到主从服务器中. 但是由于网络的不确定性, 并不能保证Wx1与Wx2两个操作到达Server1与Server2的顺序是否一致. 若顺序不一致, 就会导致主从服务器X变量的值不同, 这就产生了<strong>不一致性</strong>.</p>
+<p>而Raft算法就是一种解决主从复制一致性的分布式共识算法.</p>
+<h2 id="Raft-分布式共识算法"><a href="#Raft-分布式共识算法" class="headerlink" title="Raft 分布式共识算法"></a>Raft 分布式共识算法</h2><blockquote>
+<p>论文链接<br>Diego Ongaro and John Ousterhout. 2014. In search of an understandable consensus algorithm. In <i>Proceedings of the 2014 USENIX conference on USENIX Annual Technical Conference</i> (<i>USENIX ATC’14</i>). USENIX Association, USA, 305–320.<br><a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf">https://pdos.csail.mit.edu/6.824/papers/raft-extended.pdf</a></p>
+</blockquote>
+<p>-强烈推荐先看Raft的动画演示, 对Raft的有一个整体的印象, 再去看论文的细节. 推荐一个动画演示的网站:<br><a target="_blank" rel="noopener" href="http://thesecretlivesofdata.com/raft/">http://thesecretlivesofdata.com/raft/</a></p>
+<ul>
+<li>a lab guidance written by the Teaching Asistance of MIT 6.824, in which you may find it very helpful during implementng the lab: <a target="_blank" rel="noopener" href="https://thesquareplanet.com/blog/students-guide-to-raft/">https://thesquareplanet.com/blog/students-guide-to-raft/</a></li>
+</ul>
+<h3 id="提出背景与Paxos"><a href="#提出背景与Paxos" class="headerlink" title="提出背景与Paxos"></a>提出背景与Paxos</h3><p>… 待完善</p>
+<h4 id="Raft算法基础"><a href="#Raft算法基础" class="headerlink" title="Raft算法基础"></a>Raft算法基础</h4><p>对于任何一个时刻, 每个服务器只能以下三种状态之一: </p>
+<ul>
+<li>Leader</li>
+<li>Follower</li>
+<li>Candidate<br>通常情况下只有1个Leader, 剩下的服务器都是Follower. Follower只被动的接收来自Leader和Candidate的请求,而自身不发出请求. 所有来自客户端的请求都由Leader进行处理, (若客户端请求了一个Floower, 其会重定向至其Leader). Candidate是为了选举出一个新的Leader而存在的状态. 状态之间的转移如图:<div align="center">
+  <img src="raft/ServerStates.png" srcset="/img/loading.gif" lazyload width=70% >
+</div></li>
+</ul>
+<p>每个服务器会存储一个current term数字, 表示当前任期的编号, 这个编号随着时间单调递增. 这个任期编号会在不同的服务器进行交换. 分三种情况:</p>
+<ul>
+<li>如果当前服务器的current term小于其他服务器的term, 那么它就会更新自己的term到一个更大的值</li>
+<li>如果一个Leader或者Candidate发现自己的term过期了, 那么就会立即回到Follower的身份</li>
+<li>如果一个server收到了一个过时term的请求, 它会直接拒绝</li>
+</ul>
+<p>服务器之间采用RPC进行通信, 主要有两个调用:</p>
+<ul>
+<li>RequestVote: 被Candidate用来进行Leader选举</li>
+<li>AppendEntries: 由Leader向其他replicas复制日志条目的副本. 同时用来发送心跳信号.</li>
+</ul>
+<h4 id="Raft算法需要保证的一些性质"><a href="#Raft算法需要保证的一些性质" class="headerlink" title="Raft算法需要保证的一些性质"></a>Raft算法需要保证的一些性质</h4><p>在了解算法之前, 先了解下Raft算法所要实现的目标是什么,主要由以下五条:</p>
+<ul>
+<li><strong>Election Safty</strong>: 每个任期只能有一个Leader</li>
+<li><strong>Leader Append-Only</strong>: Leader永远不会重写和删除它日志中的条目, 只会append新的条目. 也就是说Leader对日志拥有领导权.</li>
+<li><strong>Log Matching</strong>: 如果两个日志当中有两条index与term都相同的条目, 那么所有小于等于该index的日志条目都是确定唯一的</li>
+<li><strong>Leader Completeness</strong>: 如果一个日志条目已经在某一term提交了,那么在接下来的任期(higher-numbered terms)的Leader中都会包含此条目. 即无论下一个Leader是谁, 他的log当中都应该包含系统中所有已提交的日志条目</li>
+<li><strong>State Machine Safety</strong>: 如果一个服务器已经将日志条目应用到state machine去了, 那么任何其他服务器都不能提交一个具有相同index的不同条目. 即所有对State Machine的提交都是一致的.</li>
+</ul>
+<h4 id="Leader-Election"><a href="#Leader-Election" class="headerlink" title="Leader Election"></a>Leader Election</h4><p>所有的servers都从Follower角色开始. 只要一个server持续收到来自Leader的心跳信号, 那么它就会一直保持Follower的状态. Leader会周期性的通过发送心跳信号(通过没有log entreis的AppendEntries RPC)来保持自己的统治地位. 如果一个Follower一段时间都没有收到心跳信号, 就会触发超时, 称为<strong>Election Timeout</strong>, 此时服务器就会认为Leader已挂, 并开始选举一个新的Leader.</p>
+<h5 id="Election的流程"><a href="#Election的流程" class="headerlink" title="Election的流程"></a>Election的流程</h5><ul>
+<li>follower首先自增自己的current term,并转变成candidate身份</li>
+<li>candidate投自己一票, 并向集群中的其他服务器并发的发送Request Vote RPC.</li>
+<li>candidate会一直处于自己的状态, 直到下列三件事发生:<ul>
+<li>赢下选举</li>
+<li>其他服务器确立了自己的leader地位</li>
+<li>一段时间后没有winner</li>
+</ul>
+</li>
+</ul>
+<h6 id="赢下选举"><a href="#赢下选举" class="headerlink" title="赢下选举"></a>赢下选举</h6><p>…</p>
+<h6 id="其他服务器赢下选举"><a href="#其他服务器赢下选举" class="headerlink" title="其他服务器赢下选举"></a>其他服务器赢下选举</h6><p>在等待选举的过程中, candidate可能会收到其他服务器的AppendEntries RPC, 即有其他服务器宣称自己是leader, 如果leader的term大于等于candidate的current term, 那么candidate就认为leader是合法的,并回到follower状态</p>
+<h6 id="Split-Vote"><a href="#Split-Vote" class="headerlink" title="Split Vote"></a>Split Vote</h6><p>一段时间后, candidate们之间的投票意见不一,选举超时. 通常会在所有candidate在同一时间开始选举时发生. 再超时后, current term自增, 新的一轮选举会开始.</p>
+<p>为了解决candidate同时开始选举而产生的Split Vote现象, Raft设计election timeout的时间为一个区间随机值, 比如在150 ~ 300 ms之间.</p>
 
                 
               </div>
@@ -293,6 +343,34 @@
             <div>
               <div class="post-metas my-3">
   
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" class="category-chain-item">分布式系统</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F/">#分布式</a>
+      
+    </div>
   
 </div>
 
@@ -302,8 +380,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>Hello World</div>
-      <div>http://example.com/2022/11/07/hello-world/</div>
+      <div>raft</div>
+      <div>http://example.com/2022/05/03/raft/</div>
     </div>
     <div class="license-meta">
       
@@ -315,7 +393,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>Posted on</div>
-          <div>November 7, 2022</div>
+          <div>May 3, 2022</div>
         </div>
       
       
@@ -347,15 +425,15 @@
                   <article class="post-prev col-6">
                     
                     
+                      <a href="/2022/05/03/mapreduce/" title="mapreduce">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">mapreduce</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
                   </article>
                   <article class="post-next col-6">
                     
-                    
-                      <a href="/2022/11/07/testing/" title="testing">
-                        <span class="hidden-mobile">testing</span>
-                        <span class="visible-mobile">Next</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
                     
                   </article>
                 </div>
