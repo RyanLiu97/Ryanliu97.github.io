@@ -4,6 +4,60 @@
   
   
   <entry>
+    <title>四元数Quaternion杂谈（预约）</title>
+    <link href="/2022/11/11/quaternion/"/>
+    <url>/2022/11/11/quaternion/</url>
+    
+    <content type="html"><![CDATA[<h1 id="四元数Quaternion杂谈（预约）"><a href="#四元数Quaternion杂谈（预约）" class="headerlink" title="四元数Quaternion杂谈（预约）"></a>四元数Quaternion杂谈（预约）</h1><p>先占个坑，后面仔细研究。</p><ol><li>旋转矩阵、欧拉角</li><li>四元数的简介</li><li>四元数涉及到的群论<ol><li>为什么四元数能够解决Gimbal Lock问题？</li><li>四元数的Intuition</li></ol></li><li>四元数的插值（线性插值和球面线性插值(Slerp)）<ol><li><a href="https://blog.csdn.net/weixin_42595073/article/details/100704061">https://blog.csdn.net/weixin_42595073/article/details/100704061</a></li></ol></li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>游戏数理基础</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>游戏开发</tag>
+      
+      <tag>数学</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>MIT 6.828 Lab3</title>
+    <link href="/2022/11/11/mit6828lab3/"/>
+    <url>/2022/11/11/mit6828lab3/</url>
+    
+    <content type="html"><![CDATA[<h1 id="Mit-6-828-lab3"><a href="#Mit-6-828-lab3" class="headerlink" title="Mit 6.828 lab3"></a>Mit 6.828 lab3</h1><p>开门红bug:</p><p>在merge lab3 之后，再次运行make qemu是出现一下错误：</p><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">kernel panic at kern/pmap.c:150: PADDR called with invalid kva 00000000<br></code></pre></td></tr></table></figure><p>用gdb发现kern_pgdir在boot_alloc()之后还是好好的，但在memset后被置0x0了，迷之bug。</p><p>问题解决参考：</p><blockquote><p><a href="https://qiita.com/kagurazakakotori/items/334ab87a6eeb76711936">https://qiita.com/kagurazakakotori/items/334ab87a6eeb76711936</a></p></blockquote><p>简单来说，要研究boot_alloc()中, <strong>end[]是否真的是bss的末尾</strong>。 博客中发现，在gcc 7之后，编译的kernel的bss段中，kern_pgdir落在了变量在end[]后面！淦, 就是说kern_pgdir这个指针的地址，刚好在boot_alloc(PGSIZE) 创建的这段区域中。一调用memset(kern_pgdir)就把pde_t* kern_pgdir这个指针给置零了。这里是个链接器的坑:</p><blockquote><p>The procedure is to link all .bss section of kernel objects to kernel, then set the end symbol. However, the output objdump -t obj&#x2F;kern&#x2F;pmap.o | grep kern_pgdir shows kern_pgdir is actually in COMMON section. In my personal opinion, the COMMON will be linked implicitly to .bss after end is set. To solve the problem, COMMON should be linked explicitly to .bss before end is set. That’s why we need to modify the linker script as above.</p></blockquote><p>只用将kernel.ld中的bss段显式加上COMMON的链接即可。</p><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs ld">.bss : &#123;<br>PROVIDE(edata = .);<br>*(.bss)<br>*(COMMON)<br>PROVIDE(end = .);<br>BYTE(0)<br>&#125;<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>操作系统</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>操作系统</tag>
+      
+      <tag>6.828</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>MIT 6.828 Lab2</title>
     <link href="/2022/11/08/mit6828lab2/"/>
     <url>/2022/11/08/mit6828lab2/</url>
