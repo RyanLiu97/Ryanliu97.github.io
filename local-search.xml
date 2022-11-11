@@ -31,6 +31,35 @@
   
   
   <entry>
+    <title>刚体力学仿真（预约）</title>
+    <link href="/2022/11/11/rigid_body_sim/"/>
+    <url>/2022/11/11/rigid_body_sim/</url>
+    
+    <content type="html"><![CDATA[<p>Games 103 笔记</p><p>占坑，之后写。</p><p>Outline：</p><ol><li>Torque and Inertia</li><li>Collision detection and Response<ol><li>Particle Penalty methods</li><li>Particle Impulse methods</li><li>Rigid Collision Dection and Response by Impulse</li></ol></li></ol>]]></content>
+    
+    
+    <categories>
+      
+      <category>游戏数理基础</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>游戏开发</tag>
+      
+      <tag>物理</tag>
+      
+      <tag>Games103</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>MIT 6.828 Lab3</title>
     <link href="/2022/11/11/mit6828lab3/"/>
     <url>/2022/11/11/mit6828lab3/</url>

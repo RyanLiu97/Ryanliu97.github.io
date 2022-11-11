@@ -16,21 +16,34 @@
   <meta name="author" content="Ryan Liu">
   <meta name="keywords" content="">
   
-    <meta property="og:type" content="website">
-<meta property="og:title" content="Archives">
-<meta property="og:url" content="https://ryanliu97.github.io/archives/2022/index.html">
+    <meta name="description" content="Games 103 笔记 占坑，之后写。 Outline：  Torque and Inertia Collision detection and Response Particle Penalty methods Particle Impulse methods Rigid Collision Dection and Response by Impulse">
+<meta property="og:type" content="article">
+<meta property="og:title" content="刚体力学仿真（预约）">
+<meta property="og:url" content="https://ryanliu97.github.io/2022/11/11/rigid_body_sim/index.html">
 <meta property="og:site_name" content="RyanLiu博客">
+<meta property="og:description" content="Games 103 笔记 占坑，之后写。 Outline：  Torque and Inertia Collision detection and Response Particle Penalty methods Particle Impulse methods Rigid Collision Dection and Response by Impulse">
 <meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2022-11-11T14:44:00.000Z">
+<meta property="article:modified_time" content="2022-11-11T17:23:08.085Z">
 <meta property="article:author" content="Ryan Liu">
+<meta property="article:tag" content="游戏开发">
+<meta property="article:tag" content="物理">
+<meta property="article:tag" content="Games103">
 <meta name="twitter:card" content="summary_large_image">
   
   
   
-  <title>Archives - RyanLiu博客</title>
+  <title>刚体力学仿真（预约） - RyanLiu博客</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
 
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
 
 
 
@@ -80,7 +93,7 @@
   <header>
     
 
-<div class="header-inner" style="height: 60vh;">
+<div class="header-inner" style="height: 70vh;">
   <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
   <div class="container">
     <a class="navbar-brand" href="/">
@@ -185,9 +198,49 @@
       <div class="banner-text text-center fade-in-up">
         <div class="h2">
           
-            <span id="subtitle" data-typed-text="Archives"></span>
+            <span id="subtitle" data-typed-text="刚体力学仿真（预约）"></span>
           
         </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-11 22:44" pubdate>
+          November 11, 2022 pm
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          155 words
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          2 mins
+        
+      </span>
+    
+
+    
+    
+  </div>
+
 
         
       </div>
@@ -203,70 +256,203 @@
 
   <main>
     
-      <div class="container nopadding-x-md">
-        <div id="board"
-          >
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-<div class="list-group">
-  <p class="h4">6 posts in total</p>
-  <hr>
-  
-  
-    
       
-      <p class="h5">2022</p>
-    
-    <a href="/2022/11/11/quaternion/" class="list-group-item list-group-item-action">
-      <time>11-11</time>
-      <div class="list-group-item-title">四元数Quaternion杂谈（预约）</div>
-    </a>
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">刚体力学仿真（预约）</h1>
+            
+            
+              <div class="markdown-body">
+                
+                <p>Games 103 笔记</p>
+<p>占坑，之后写。</p>
+<p>Outline：</p>
+<ol>
+<li>Torque and Inertia</li>
+<li>Collision detection and Response<ol>
+<li>Particle Penalty methods</li>
+<li>Particle Impulse methods</li>
+<li>Rigid Collision Dection and Response by Impulse</li>
+</ol>
+</li>
+</ol>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
   
     
-    <a href="/2022/11/11/rigid_body_sim/" class="list-group-item list-group-item-action">
-      <time>11-11</time>
-      <div class="list-group-item-title">刚体力学仿真（预约）</div>
-    </a>
+      <span class="category-chain">
+        
+  <a href="/categories/%E6%B8%B8%E6%88%8F%E6%95%B0%E7%90%86%E5%9F%BA%E7%A1%80/" class="category-chain-item">游戏数理基础</a>
   
+  
+
+      </span>
     
-    <a href="/2022/11/11/mit6828lab3/" class="list-group-item list-group-item-action">
-      <time>11-11</time>
-      <div class="list-group-item-title">MIT 6.828 Lab3</div>
-    </a>
   
-    
-    <a href="/2022/11/08/mit6828lab2/" class="list-group-item list-group-item-action">
-      <time>11-08</time>
-      <div class="list-group-item-title">MIT 6.828 Lab2</div>
-    </a>
+</span>
+
+    </div>
   
-    
-    <a href="/2022/05/03/mapreduce/" class="list-group-item list-group-item-action">
-      <time>05-03</time>
-      <div class="list-group-item-title">mapreduce</div>
-    </a>
   
-    
-    <a href="/2022/05/03/raft/" class="list-group-item list-group-item-action">
-      <time>05-03</time>
-      <div class="list-group-item-title">raft</div>
-    </a>
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E6%B8%B8%E6%88%8F%E5%BC%80%E5%8F%91/">#游戏开发</a>
+      
+        <a href="/tags/%E7%89%A9%E7%90%86/">#物理</a>
+      
+        <a href="/tags/Games103/">#Games103</a>
+      
+    </div>
   
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>刚体力学仿真（预约）</div>
+      <div>https://ryanliu97.github.io/2022/11/11/rigid_body_sim/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>Author</div>
+          <div>Ryan Liu</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>Posted on</div>
+          <div>November 11, 2022</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>Licensed under</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - Attribution">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/11/quaternion/" title="四元数Quaternion杂谈（预约）">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">四元数Quaternion杂谈（预约）</span>
+                        <span class="visible-mobile">Previous</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/11/mit6828lab3/" title="MIT 6.828 Lab3">
+                        <span class="hidden-mobile">MIT 6.828 Lab3</span>
+                        <span class="visible-mobile">Next</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;Table of Contents</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
 </div>
 
 
 
 
 
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
     
 
     
@@ -360,6 +546,99 @@
 
 
 
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.11/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
 
   <script  src="/js/local-search.js" ></script>
 
